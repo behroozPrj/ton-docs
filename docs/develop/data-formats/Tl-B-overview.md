@@ -1,4 +1,4 @@
-# TL-B Overview
+# TL-B Overview - marked on deletion
 
 :::caution advanced level
 This information is **very low-level** and could be hard to understand for newcomers.  
@@ -78,7 +78,7 @@ _type-expr_ usually consist of (optionally parametrized) _Type_ only as: `last_t
 
 #### Implicit
 Some fields may be implicit. Their definitions are surrounded by curly brackets, which indicate that the field is not actually present in the serialization, but that its value must be deduced from some other data (usually the parameters of the type being serialized).
-For instance 
+For instance
 ```tlb
 nothing$0 {X:Type} = Maybe X;
 just$1 {X:Type} value:X = Maybe X;
@@ -146,7 +146,7 @@ An example of a generator used by a TON node can be found in the [Ton node sourc
 
 ## What's next?
 
-If you want to know more about TL-B serialization and see some examples of complex structures parsing, 
+If you want to know more about TL-B serialization and see some examples of complex structures parsing,
 you can continue by reading:
 * [Deep Dive into TL-B](/docs/develop/data-formats/tl-b)
 

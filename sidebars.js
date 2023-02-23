@@ -432,6 +432,37 @@ const sidebars = {
     'develop/howto/network-configs',
     {
       type: 'category',
+      label: 'Data formats',
+      items: [
+        {
+          type: 'category',
+          label: 'TL-B',
+          items: [
+            'develop/data-formats/cell-boc',
+            'develop/data-formats/tl-b-language',
+            'develop/data-formats/tl-b',
+            'develop/data-formats/msg-tlb',
+            'develop/data-formats/crc32',
+            'develop/data-formats/tlb-ide'
+          ]
+        },
+        'develop/data-formats/tl',
+        'develop/data-formats/Tl-B-overview'
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Network protocols',
+      items: [
+        'develop/network/adnl-tcp',
+        'develop/network/adnl-udp',
+        'develop/network/dht',
+        'develop/network/rldp',
+        'develop/network/overlay'
+      ]
+    },
+    {
+      type: 'category',
       label: 'Low Level Internals',
       items: [
         'develop/howto/README',
@@ -440,26 +471,6 @@ const sidebars = {
         'develop/howto/fees-low-level',
         'develop/howto/full-node',
         'develop/howto/validator',
-        {
-          type: 'category',
-          label: 'Data formats',
-          items: [
-            'develop/data-formats/cell-boc',
-            'develop/data-formats/tl',
-            'develop/data-formats/tl-b'
-          ]
-        },
-        {
-          type: 'category',
-          label: 'Network protocols',
-          items: [
-            'develop/network/adnl-tcp',
-            'develop/network/adnl-udp',
-            'develop/network/dht',
-            'develop/network/rldp',
-            'develop/network/overlay'
-          ]
-        },
         {
           type: 'category',
           label: 'Archived',
@@ -533,13 +544,13 @@ const sidebars = {
       label: 'Run a Node',
       items: [
         'participate/nodes/node-types',
+        'participate/nodes/run-node',
         'participate/nodes/local-ton',
         'participate/nodes/node-maintenance-and-security',
-        'participate/nodes/run-node',
         'participate/nodes/collators',
         {
           type: 'link',
-          label: 'Run a Validator Node',
+          label: 'Become a Validator',
           href: 'https://ton.org/validator',
         },
       ],

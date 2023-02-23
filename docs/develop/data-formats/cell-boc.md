@@ -1,14 +1,27 @@
 # Cell & Bag of Cells
 
 ## Cell
-Cell represents a container for data that can store up to 1023 bits and have up to 4 references to other Cells. In TON, everything consists of cells, contract code, stored data, blocks. This approach achieves flexibility.
+Cell represents a container for data that can store up to 1023 bits and have up to 4 references to other Cells. 
+
+![TL-B example](/img/docs/data-formats/tl-b-docs-5.png?raw=true)
+
 
 ## Bag of Cells
+
 Bag of Cells - format for serializing cells into an array of bytes, described as [TL-B schema](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25).
+
+![TL-B example](/img/docs/data-formats/tl-b-docs-6.png?raw=true)
+
+In TON, everything consists of cells, contract code, stored data, blocks. This approach achieves flexibility.
+
+![TL-B example](/img/docs/data-formats/tl-b-docs-4.png?raw=true)
 
 ### Cell serialization
 Let's analyze this kind of cell:
-```
+
+![TL-B example](/img/docs/data-formats/tl-b-docs-7.png?raw=true)
+
+```json
 1[8_] -> {
   24[0AAAAA],
   7[FE] -> {
@@ -19,13 +32,13 @@ Let's analyze this kind of cell:
 Here we have a 1-bit size root cell that has 2 links: the first to a 24-bit cell and the second to a 7-bit cell, which has 1 link to a 24-bit cell.
 
 We need to turn the cells into a flat set of bytes, for this we first need to leave only unique cells - we have 3 out of 4 of them. We have:
-```
+```json
 1[8_]
 24[0AAAAA]
 7[FE]
 ```
 Now let's arrange them in such an order that the parent cells do not point backwards. The cell pointed to by the rest must be in the list after the ones that point to it. We get:
-```
+```json
 1[8_]      -> index 0 (root cell)
 7[FE]      -> index 1
 24[0AAAAA] -> index 2
@@ -33,27 +46,27 @@ Now let's arrange them in such an order that the parent cells do not point backw
 
 Let's calculate descriptors for each of them. These are 2 bytes that store flags, information about the length of the data and the number of links. The flags will be omitted in the current parse, they are almost always 0. The first byte contains 5 flag bits and 3 link count bits. 
 The second byte is the length of the full 4-bit groups (but at least 1 if not empty). We get:
-```
+```json
 1[8_]      -> 0201 -> 2 links, length 1 
 7[FE]      -> 0101 -> 1 link, length 1
 24[0AAAAA] -> 0006 -> 0 links, length 6
 ```
 For data with incomplete 4-bit groups, 1 bit is added to the end. It means the end bit of the group and is used to determine the true size of incomplete groups. Let's add it:
-```
+```json
 1[8_]      -> C0     -> 0b10000000->0b11000000
 7[FE]      -> FF     -> 0b11111110->0b11111111
 24[0AAAAA] -> 0AAAAA -> do not change (full groups)
 ```
 
 Now let's add link indexes:
-```
+```json
 0 1[8_]      -> 0201 -> refers to 2 cells with such indexes
 1 7[FE]      -> 02 -> refers to cells with index 2
 2 24[0AAAAA] -> no links
 ```
 
 And put it all together:
-```
+```json
 0201 C0     0201  
 0101 AA     02
 0006 0AAAAA 
@@ -62,7 +75,32 @@ And put it all together:
 And concat it into the single array of bytes:
 `0201c002010101ff0200060aaaaa`, size 14 bytes.
 
-[Serialization example](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/tvm/cell/serialize.go#L205)
+
+<details>
+  <summary><b>Show example</b></summary>
+
+```golang
+func (c *Cell) descriptors() []byte {
+ceilBytes := c.bitsSz / 8
+if c.bitsSz%8 ! = 0 {
+ceilBytes++
+}
+
+	// calc size
+	ln := ceilBytes + c.bitsSz/8
+
+	specBit := byte(0)
+	if c.special {
+		specBit = 8
+	}
+
+	return []byte{byte(len(c.refs)) + specBit + c.level*32, byte(ln)}
+}
+```
+[Source](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/tvm/cell/serialize.go#L205)
+
+</details>
+
 
 ### Packing in BoC
 Let's pack the cell from the previous section. We have already serialized it into a flat 14 byte array.
@@ -94,7 +132,7 @@ BoC Implementation Examples: [Serialization](https://github.com/xssnick/tonutils
 Cells are divided into two types: ordinary and special. Most of the cells that the user works with are ordinary and simply carry information. But for the internal functionality of the network, special cells are often used, which work according to a slightly different scenario, depending on the subtype of the special cell.
 
 The type of special cell is determined by the first 8 bits of its data and can be one of the following:
-```
+```js
 0x01: PrunnedBranch
 0x02: Library
 0x03: MerkleProof
@@ -115,7 +153,7 @@ The symbol `*` marks special cells, the root one has type 0x03 - MerkleProof, th
 <details>
   <summary><b>Show example</b></summary>
 
-```
+```json
 280[03E42E9D59FE3B0900D185EA76AA5F64C6FA0F0C723FFD3CCA5F22B21354064C540219]* -> {
   362[9023AFE2FFFFFF110000000000000000000000000001E9AA7F0000000163C1322C00001F522060E3C10194CD420_] -> {
     288[0101CA91D55F8B903536211B4FB74EA37FD7930C3774D76FE64B45BCB1FE0E1E26380002]*,

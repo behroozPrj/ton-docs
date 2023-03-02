@@ -425,8 +425,9 @@ const sidebars = {
       type: 'category',
       label: 'Fift language',
       items: [
-        'develop/fift-and-tvm-assembly',
-        'develop/fift-deep-dive',
+        'develop/fift/overview',
+        'develop/fift/fift-and-tvm-assembly',
+        'develop/fift/fift-deep-dive',
       ]
     },
     'develop/howto/network-configs',
@@ -471,6 +472,9 @@ const sidebars = {
         'develop/howto/fees-low-level',
         'develop/howto/full-node',
         'develop/howto/validator',
+        'develop/research-and-development/boc',
+        'develop/research-and-development/minter-flow',
+         'develop/research-and-development/persistent-states',
         {
           type: 'category',
           label: 'Archived',
